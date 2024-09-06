@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="MenuMapper">
+
+    <!--
+        조회한 컬럼과 자바 객체의 필드를 매핑(연결) 시키기 위한 설정으로 resultMap을 사용한다.
+    -->
+    <resultMap id="menuResultMap" type="com.example.crud.section01.xmlconfig.MenuDTO">
+        <!-- id : pk에 해당하는 컬럼을 작성 -->
+        <id property="menuCode" column="menu_code"/>
+        <!-- result : pk 외의 일반 컬럼을 작성 -->
+        <result property="menuName" column="menu_name"/>
+        <result property="menuPrice" column="menu_price"/>
+        <result property="categoryCode" column="category_code"/>
+        <result property="orderableStatus" column="orderable_status"/>
+    </resultMap>
+
+    <select id="selectAllMenu" resultMap="menuResultMap">
+        SELECT
+        menu_code
+        , menu_name
+        , menu_price
+        , category_code
+        , orderable_status
+        FROM tbl_menu
+        WHERE orderable_status = 'Y'
+        ORDER BY menu_code
+    </select>
+
+    <!--
+        조회 시 전달 되는 파라미터가 기본 자료형일 경우 #{ } 내부에 작성 되는 명칭은 어떤 값을 작성해도 무관함
+        전달 파라미터가 객체 자료형일 경우 #{ } 내부에 작성 되는 명칭을 필드명과 일치시켜야 함
+        id, resultMap or resultType은 필수 작성
+        parameterType은 optional (MyBatis에서 사용하는 java type에 대한 별칭 사용 가능)
+    -->
+    <select id="selectMenuByMenuCode" resultMap="menuResultMap" parameterType="_int">
+        SELECT
+        menu_code
+        , menu_name
+        , menu_price
+        , category_code
+        , orderable_status
+        FROM tbl_menu
+        WHERE orderable_status = 'Y'
+        AND menu_code = #{ menuCode }
+    </select>
+
+    <!--
+        id : 필수
+        resultType or resultMap 속성 없이 수행 된 행의 개수가 int 타입으로 반환 되도록 되어 있다.
+        parameterType : optional
+        자주 사용하는 타입에 대해서 config에서 별도로 별칭 설정을 해둔 경우 별칭으로 사용이 가능하다.
+        그렇지 않다면 패키지명을 포함한 풀네임을 작성해야 한다.
+    -->
+    <insert id="insertMenu" parameterType="MenuDTO">
+        INSERT INTO
+        tbl_menu(menu_name, menu_price, category_code, orderable_status)
+        VALUES
+        (#{ menuName }, #{ menuPrice }, #{ categoryCode }, 'Y')
+    </insert>
+
+
+
+
+
+
+
+</mapper>
